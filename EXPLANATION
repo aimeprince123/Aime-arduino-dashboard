@@ -1,0 +1,9 @@
+id: Unique record for each visit.
+
+plate_number: Car registration number.
+
+entry_time: Date and time the car entered.
+
+exit_time: Date and time the car left; initially empty.
+
+status: Whether the car is parked or has exited.
