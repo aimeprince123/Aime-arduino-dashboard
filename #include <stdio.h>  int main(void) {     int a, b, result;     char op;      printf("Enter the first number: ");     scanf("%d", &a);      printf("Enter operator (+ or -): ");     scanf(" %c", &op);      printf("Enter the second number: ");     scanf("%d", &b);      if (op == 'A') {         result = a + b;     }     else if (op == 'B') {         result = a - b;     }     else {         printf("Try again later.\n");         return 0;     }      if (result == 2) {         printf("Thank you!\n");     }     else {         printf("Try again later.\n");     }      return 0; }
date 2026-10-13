@@ -1,1 +1,36 @@
+#include <stdio.h>
 
+int main(void)
+{
+    int a, b, result;
+    char op;
+
+    printf("Enter the first number: ");
+    scanf("%d", &a);
+
+    printf("Enter operator (+ or -): ");
+    scanf(" %c", &op);
+
+    printf("Enter the second number: ");
+    scanf("%d", &b);
+
+    if (op == 'A') {
+        result = a + b;
+    }
+    else if (op == 'B') {
+        result = a - b;
+    }
+    else {
+        printf("Try again later.\n");
+        return 0;
+    }
+
+    if (result == 2) {
+        printf("Thank you!\n");
+    }
+    else {
+        printf("Try again later.\n");
+    }
+
+    return 0;
+}
