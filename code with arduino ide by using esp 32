@@ -1,0 +1,20 @@
+const int irPin = 2;
+
+void setup() {
+  pinMode(irPin, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int sensorValue = digitalRead(irPin);
+
+  // Many IR obstacle sensors output LOW
+  // when an object is detected.
+  if (sensorValue == LOW) {
+    Serial.println("CAR_IN_PARKING");
+  } else {
+    Serial.println("PARKING_EMPTY");
+  }
+
+  delay(1000);
+}
