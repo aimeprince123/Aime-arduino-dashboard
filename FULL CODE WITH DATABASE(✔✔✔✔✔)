@@ -1,0 +1,35 @@
+CREATE DATABASE IF NOT EXISTS car_parking
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE car_parking;
+
+CREATE TABLE IF NOT EXISTS parking_records (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    plate_number VARCHAR(20) NOT NULL,
+    entry_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    exit_time DATETIME NULL,
+    status ENUM('PARKED', 'EXITED') NOT NULL DEFAULT 'PARKED',
+
+    active_plate VARCHAR(20)
+        GENERATED ALWAYS AS (
+            CASE
+                WHEN status = 'PARKED' THEN plate_number
+                ELSE NULL
+            END
+        ) STORED,
+
+    UNIQUE KEY unique_active_plate (active_plate),
+    INDEX idx_entry_time (entry_time),
+    INDEX idx_exit_time (exit_time),
+    INDEX idx_status (status)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS parking_settings (
+    id TINYINT UNSIGNED PRIMARY KEY,
+    capacity INT UNSIGNED NOT NULL DEFAULT 100
+) ENGINE=InnoDB;
+
+INSERT INTO parking_settings (id, capacity)
+VALUES (1, 100)
+ON DUPLICATE KEY UPDATE id = VALUES(id);
