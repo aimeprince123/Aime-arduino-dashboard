@@ -1,0 +1,8 @@
+CREATE TABLE parking_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    plate_number VARCHAR(20) NOT NULL,
+    entry_time DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    exit_time DATETIME NULL,
+    status ENUM('PARKED', 'EXITED')
+        NOT NULL DEFAULT 'PARKED'
+);
