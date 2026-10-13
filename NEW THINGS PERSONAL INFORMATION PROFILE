@@ -1,0 +1,89 @@
+#include <stdio.h>
+
+int main(void) {
+    char name1[20], name2[20], name3[20];
+    char residenceplace1[20];
+    char residenceplace2[20];
+    char residenceplace3[20];
+
+    int yearofbirth1, yearofbirth2, yearofbirth3;
+    int age1, age2, age3;
+    int currentyear = 2026;
+
+    char bloodgroup1, bloodgroup2, bloodgroup3;
+
+    // Enter information for person 1
+    printf("Enter information for person 1:\n");
+
+    printf("Enter name: ");
+    scanf("%19s", name1);
+
+    printf("Enter residence: ");
+    scanf("%19s", residenceplace1);
+
+    printf("Enter year of birth: ");
+    scanf("%d", &yearofbirth1);
+
+    printf("Enter blood group: ");
+    scanf(" %c", &bloodgroup1);
+
+    // Enter information for person 2
+    printf("\nEnter information for person 2:\n");
+
+    printf("Enter name: ");
+    scanf("%19s", name2);
+
+    printf("Enter residence: ");
+    scanf("%19s", residenceplace2);
+
+    printf("Enter year of birth: ");
+    scanf("%d", &yearofbirth2);
+
+    printf("Enter blood group: ");
+    scanf(" %c", &bloodgroup2);
+
+    // Enter information for person 3
+    printf("\nEnter information for person 3:\n");
+
+    printf("Enter name: ");
+    scanf("%19s", name3);
+
+    printf("Enter residence: ");
+    scanf("%19s", residenceplace3);
+
+    printf("Enter year of birth: ");
+    scanf("%d", &yearofbirth3);
+
+    printf("Enter blood group: ");
+    scanf(" %c", &bloodgroup3);
+
+    // Calculate ages
+    age1 = currentyear - yearofbirth1;
+    age2 = currentyear - yearofbirth2;
+    age3 = currentyear - yearofbirth3;
+
+    // Display all information as a list
+    printf("\n========== PEOPLE INFORMATION ==========\n");
+
+    printf("\n1. Name: %s\n", name1);
+    printf("   Residence: %s\n", residenceplace1);
+    printf("   Year of birth: %d\n", yearofbirth1);
+    printf("   Age: %d years\n", age1);
+    printf("   Blood group: %c\n", bloodgroup1);
+
+    printf("\n2. Name: %s\n", name2);
+    printf("   Residence: %s\n", residenceplace2);
+    printf("   Year of birth: %d\n", yearofbirth2);
+    printf("   Age: %d years\n", age2);
+    printf("   Blood group: %c\n", bloodgroup2);
+
+    printf("\n3. Name: %s\n", name3);
+    printf("   Residence: %s\n", residenceplace3);
+    printf("   Year of birth: %d\n", yearofbirth3);
+    printf("   Age: %d years\n", age3);
+    printf("   Blood group: %c\n", bloodgroup3);
+
+    printf("\n========================================\n");
+
+    return 0;
+}
