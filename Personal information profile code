@@ -1,0 +1,67 @@
+#include <stdio.h>
+
+int main(void) {
+    char name1[20];
+    char name2[20];
+    char name3[20];
+
+    char residenceplace1[20] = "Muhima";
+    char residenceplace2[20] = "Nyamirambo";
+    char residenceplace3[20] = "Nyamirambo";
+
+    int yearofbirth1 = 2005;
+    int yearofbirth2 = 2006;
+    int yearofbirth3 = 2007;
+
+    int currentyear = 2026;
+    int age;
+
+    char bloodgroup1 = 'A';
+    char bloodgroup2 = 'B';
+    char bloodgroup3 = 'O';
+
+    int choice;
+
+    printf("Enter name1: ");
+    scanf("%19s", name1);
+
+    printf("Enter name2: ");
+    scanf("%19s", name2);
+
+    printf("Enter name3: ");
+    scanf("%19s", name3);
+
+    printf("\nEnter a number to view information (1, 2, or 3): ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        age = currentyear - yearofbirth1;
+
+        printf("\nName: %s\n", name1);
+        printf("Residence: %s\n", residenceplace1);
+        printf("Year of birth: %d\n", yearofbirth1);
+        printf("Age: %d years\n", age);
+        printf("Blood group: %c\n", bloodgroup1);
+    }
+    else if (choice == 2) {
+        age = currentyear - yearofbirth2;
+
+        printf("\nName: %s\n", name2);
+        printf("Residence: %s\n", residenceplace2);
+        printf("Year of birth: %d\n", yearofbirth2);
+        printf("Age: %d years\n", age);
+        printf("Blood group: %c\n", bloodgroup2);
+    }
+    else if (choice == 3) {
+        age = currentyear - yearofbirth3;
+
+        printf("\nName: %s\n", name3);
+        printf("Residence: %s\n", residenceplace3);
+        printf("Year of birth: %d\n", yearofbirth3);
+        printf("Age: %d years\n", age);
+        printf("Blood group: %c\n", bloodgroup3);
+    }
+    
+
+    return 0;
+}
