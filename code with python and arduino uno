@@ -1,0 +1,69 @@
+import serial
+import sqlite3
+from datetime import datetime
+import time
+
+# Connect to Arduino
+# Change COM3 to your Arduino port.
+# On Linux, it may be /dev/ttyACM0.
+arduino = serial.Serial("COM3", 9600, timeout=2)
+time.sleep(2)
+
+# Create or open the database
+db = sqlite3.connect("parking.db")
+cursor = db.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS parking (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    status TEXT NOT NULL,
+    timestamp TEXT NOT NULL
+)
+""")
+db.commit()
+
+last_status = None
+
+print("Car Parking Detection System Started")
+
+try:
+    while True:
+        message = arduino.readline().decode(
+            "utf-8", errors="ignore"
+        ).strip()
+
+        if message not in (
+            "CAR_IN_PARKING", "PARKING_EMPTY"
+        ):
+            continue
+
+        if message != last_status:
+            if message == "CAR_IN_PARKING":
+                status = "OCCUPIED"
+                print("Output: Car in parking")
+            else:
+                status = "EMPTY"
+                print("Output: No car in parking")
+
+            timestamp = datetime.now().isoformat(
+                timespec="seconds"
+            )
+
+            cursor.execute(
+                "INSERT INTO parking (status, timestamp) "
+                "VALUES (?, ?)",
+                (status, timestamp)
+            )
+            db.commit()
+
+            print("Database saved:", status, timestamp)
+            print("-------------------------")
+
+            last_status = message
+
+except KeyboardInterrupt:
+    print("System stopped.")
+
+finally:
+    arduino.close()
+    db.close()
