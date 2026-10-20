@@ -1,0 +1,127 @@
+#include "BluetoothSerial.h"
+
+BluetoothSerial SerialBT;
+
+// ================= MOTOR PINS =================
+int ENA = 25;
+int ENB = 26;
+
+int IN1 = 27;
+int IN2 = 14;
+int IN3 = 12;
+int IN4 = 13;
+
+int speed = 150;
+
+void setup()
+{
+  Serial.begin(115200);
+
+  // Start Bluetooth
+  SerialBT.begin("ESP32_BT_CAR");
+
+  Serial.println("ESP32 Bluetooth Car");
+  Serial.println("Bluetooth Name: ESP32_BT_CAR");
+  Serial.println("Waiting for Command...");
+
+  // Motor pins
+  pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
+
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+
+  // Safety: Motor OFF at startup
+  analogWrite(ENA, 0);
+  analogWrite(ENB, 0);
+
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+}
+
+void loop()
+{
+  if (SerialBT.available())
+  {
+    char cmd = SerialBT.read();
+
+    // ================= FORWARD =================
+    if (cmd == 'U' || cmd == 'u')
+    {
+      digitalWrite(IN1, HIGH);
+      digitalWrite(IN2, LOW);
+
+      digitalWrite(IN3, HIGH);
+      digitalWrite(IN4, LOW);
+
+      analogWrite(ENA, speed);
+      analogWrite(ENB, speed);
+
+      Serial.println("FORWARD");
+    }
+
+    // ================= BACKWARD =================
+    else if (cmd == 'D' || cmd == 'd')
+    {
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, HIGH);
+
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, HIGH);
+
+      analogWrite(ENA, speed);
+      analogWrite(ENB, speed);
+
+      Serial.println("BACKWARD");
+    }
+
+    // ================= LEFT =================
+    else if (cmd == 'L' || cmd == 'l')
+    {
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, HIGH);
+
+      digitalWrite(IN3, HIGH);
+      digitalWrite(IN4, LOW);
+
+      analogWrite(ENA, speed);
+      analogWrite(ENB, speed);
+
+      Serial.println("LEFT");
+    }
+
+    // ================= RIGHT =================
+    else if (cmd == 'R' || cmd == 'r')
+    {
+      digitalWrite(IN1, HIGH);
+      digitalWrite(IN2, LOW);
+
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, HIGH);
+
+      analogWrite(ENA, speed);
+      analogWrite(ENB, speed);
+
+      Serial.println("RIGHT");
+    }
+
+    // ================= STOP =================
+    else if (cmd == 'S' || cmd == 's')
+    {
+      analogWrite(ENA, 0);
+      analogWrite(ENB, 0);
+
+      digitalWrite(IN1, LOW);
+      digitalWrite(IN2, LOW);
+
+      digitalWrite(IN3, LOW);
+      digitalWrite(IN4, LOW);
+
+      Serial.println("STOP");
+    }
+  }
+}
