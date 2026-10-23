@@ -1,0 +1,124 @@
+
+#include <Arduino.h>
+#include <SPI.h>
+#include <SD.h>
+#include "AudioFileSourceSD.h"
+#include "AudioGeneratorWAV.h"
+#include "AudioOutputI2S.h"
+
+const int SD_CS = 13;
+
+AudioGeneratorWAV *wav = nullptr;
+AudioFileSourceSD *file = nullptr;
+AudioOutputI2S *out = nullptr;
+
+String command = "";
+
+void stopAudio() {
+  if (wav != nullptr) {
+    if (wav->isRunning()) {
+      wav->stop();
+    }
+    delete wav;
+    wav = nullptr;
+  }
+
+  if (file != nullptr) {
+    delete file;
+    file = nullptr;
+  }
+}
+
+void speakFile(const char *filename) {
+  stopAudio();
+
+  if (!SD.exists(filename)) {
+    Serial.print("ERROR: File not found: ");
+    Serial.println(filename);
+    return;
+  }
+
+  file = new AudioFileSourceSD(filename);
+  wav = new AudioGeneratorWAV();
+
+  if (!wav->begin(file, out)) {
+    Serial.println("ERROR: Cannot play WAV file");
+    stopAudio();
+    return;
+  }
+
+  Serial.print("PLAYING: ");
+  Serial.println(filename);
+
+  while (wav->isRunning()) {
+    if (!wav->loop()) {
+      wav->stop();
+    }
+    delay(1);
+  }
+
+  stopAudio();
+  Serial.println("DONE");
+}
+
+void handleCommand(String cmd) {
+  cmd.trim();
+  cmd.toUpperCase();
+
+  if (cmd == "WATER") {
+    speakFile("/water.wav");
+  }
+  else if (cmd == "HELP") {
+    speakFile("/help.wav");
+  }
+  else if (cmd == "YES") {
+    speakFile("/yes.wav");
+  }
+  else if (cmd == "NO") {
+    speakFile("/no.wav");
+  }
+  else if (cmd == "STOP") {
+    stopAudio();
+    Serial.println("STOPPED");
+  }
+  else {
+    Serial.println("ERROR: Unknown command");
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
+
+  SPI.begin(18, 19, 23, SD_CS);
+
+  if (!SD.begin(SD_CS, SPI)) {
+    Serial.println("ERROR: SD card initialization failed");
+    while (true) {
+      delay(1000);
+    }
+  }
+
+  out = new AudioOutputI2S();
+  out->SetPinout(26, 25, 22);
+  out->SetGain(0.7);
+
+  Serial.println("READY");
+  Serial.println("Commands: WATER, HELP, YES, NO, STOP");
+}
+
+void loop() {
+  while (Serial.available() > 0) {
+    char ch = (char)Serial.read();
+
+    if (ch == '\n' || ch == '\r') {
+      if (command.length() > 0) {
+        handleCommand(command);
+        command = "";
+      }
+    }
+    else if (command.length() < 30) {
+      command += ch;
+    }
+  }
+}
