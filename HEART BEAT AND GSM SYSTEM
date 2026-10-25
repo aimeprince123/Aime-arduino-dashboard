@@ -1,0 +1,68 @@
+#include <SoftwareSerial.h>
+
+SoftwareSerial gsm(7, 8);
+
+const int pulsePin = A0;
+const int ledPin = 13;
+
+int threshold = 550;
+int bpm = 0;
+
+unsigned long lastBeat = 0;
+bool previousSignal = false;
+bool called = false;
+
+void setup() {
+  Serial.begin(9600);
+  gsm.begin(9600);
+
+  pinMode(ledPin, OUTPUT);
+
+  delay(1000);
+  gsm.println("AT");
+  delay(1000);
+
+  Serial.println("Heartbeat Monitor Started");
+}
+
+void loop() {
+  int signal = analogRead(pulsePin);
+  bool currentSignal = signal > threshold;
+
+  if (currentSignal && !previousSignal) {
+    unsigned long currentTime = millis();
+
+    if (lastBeat > 0) {
+      unsigned long interval = currentTime - lastBeat;
+
+      if (interval >= 300 && interval <= 6000) {
+        bpm = 60000 / interval;
+
+        Serial.print("Heart Rate: ");
+        Serial.print(bpm);
+        Serial.println(" BPM");
+
+        if (bpm <= 30 && !called) {
+          Serial.println("WARNING! Calling emergency contact.");
+
+          gsm.println("ATD+250791733265;");
+          called = true;
+
+          delay(20000);
+          gsm.println("ATH");
+        }
+
+        if (bpm > 35) {
+          called = false;
+        }
+      }
+    }
+
+    lastBeat = currentTime;
+  }
+
+  digitalWrite(ledPin, currentSignal ? HIGH : LOW);
+
+  previousSignal = currentSignal;
+  delay(5);
+}
