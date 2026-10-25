@@ -1,0 +1,190 @@
+#include <WiFi.h>
+#include <WebServer.h>
+
+// CHANGE THESE to your Wi-Fi network name and password.
+const char* ssid = "YOUR_WIFI_NAME";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// ESP32 pins
+const int pulsePin = 34;       // Pulse sensor signal -> GPIO34
+const int ledPin = 2;          // Onboard LED on many ESP32 boards
+const int gsmRxPin = 16;       // ESP32 RX2 <- GSM TX
+const int gsmTxPin = 17;       // ESP32 TX2 -> GSM RX
+
+// Adjust after observing your sensor's Serial readings.
+int threshold = 2000;          // ESP32 ADC range is usually 0-4095
+const int lowBpmThreshold = 30;
+const int resetBpmThreshold = 35;
+
+HardwareSerial gsm(2);
+WebServer server(80);
+
+int bpm = 0;
+int rawSignal = 0;
+unsigned long lastBeat = 0;
+unsigned long lastValidBeat = 0;
+bool previousSignal = false;
+bool called = false;
+unsigned long callStartedAt = 0;
+String callStatus = "Not triggered";
+String systemStatus = "Waiting for pulse";
+
+const char dashboardHtml[] PROGMEM = R"rawliteral(
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ESP32 Heartbeat Monitor</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:22px;font-family:Arial,sans-serif;background:#101827;color:#eef4ff}
+main{max-width:900px;margin:auto}h1{margin:0;font-size:clamp(26px,5vw,38px)}.muted{color:#aebdd3}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-top:22px}
+.card{background:#1b2940;border:1px solid #30415b;border-radius:17px;padding:20px}
+.label{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#aebdd3}
+.big{font-size:55px;font-weight:800;margin:12px 0}.pill{display:inline-block;padding:8px 12px;border-radius:99px;background:#30415b}
+.good{color:#62d6c5}.warn{color:#ffbd69}.bad{color:#ff7185}
+button{background:#31445f;color:white;border:0;padding:10px 14px;border-radius:9px;cursor:pointer}
+canvas{width:100%;height:220px}.foot{font-size:13px;line-height:1.55;color:#aebdd3}
+</style></head><body><main>
+<h1>♥ ESP32 Heartbeat Monitor</h1>
+<p class="muted">Live dashboard · Local Wi-Fi</p>
+<p><span id="connection" class="pill">Connecting…</span></p>
+<div class="grid">
+<section class="card"><div class="label">Heart rate</div><div class="big" id="bpm">--</div>
+<div class="muted">beats per minute (BPM)</div><p id="rate" class="good">Waiting for readings</p></section>
+<section class="card"><div class="label">System status</div><h2 id="status">Starting</h2>
+<p class="muted">Raw sensor value: <b id="raw">--</b></p><p class="muted">Updated: <span id="updated">--</span></p></section>
+<section class="card"><div class="label">GSM emergency call</div><h2 id="call">Not triggered</h2>
+<p class="muted">The GSM module places the call; this dashboard reports the ESP32 status.</p></section>
+</div>
+<section class="card" style="margin-top:15px"><div class="label">Recent BPM readings</div><canvas id="chart"></canvas><button onclick="historyData=[];draw()">Clear chart</button></section>
+<p class="foot"><b>Safety:</b> Educational prototype only, not a medical device. Sensor noise can cause false readings. Do not rely on this device for emergency care. Use the GSM module's separate, suitable power supply and common ground as required. Never feed more than 3.3 V into an ESP32 GPIO.</p>
+</main>
+<script>
+let historyData=[];
+function draw(){const c=document.getElementById('chart'),r=c.getBoundingClientRect(),d=window.devicePixelRatio||1;
+c.width=r.width*d;c.height=220*d;const x=c.getContext('2d');x.scale(d,d);const w=r.width,h=220;
+x.clearRect(0,0,w,h);x.strokeStyle='#30415b';x.fillStyle='#aebdd3';x.font='12px Arial';
+[0,30,60,90,120,150].forEach(v=>{let y=h-20-v/150*(h-40);x.beginPath();x.moveTo(32,y);x.lineTo(w-5,y);x.stroke();x.fillText(v,3,y+4)});
+if(historyData.length<2)return;x.strokeStyle='#62d6c5';x.lineWidth=2;x.beginPath();
+historyData.forEach((v,i)=>{let px=32+i*(w-38)/Math.max(29,historyData.length-1),py=h-20-Math.min(150,Math.max(0,v))/150*(h-40);i?x.lineTo(px,py):x.moveTo(px,py)});x.stroke()}
+async function refresh(){try{const r=await fetch('/data',{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const d=await r.json();
+document.getElementById('connection').textContent='ESP32 connected';document.getElementById('connection').className='pill good';
+document.getElementById('bpm').textContent=d.bpm>0?d.bpm:'--';document.getElementById('raw').textContent=d.raw;
+document.getElementById('status').textContent=d.system;document.getElementById('call').textContent=d.call;
+document.getElementById('updated').textContent=new Date().toLocaleTimeString();
+let rate=document.getElementById('rate');rate.textContent=d.bpm>0?(d.bpm<=30?'LOW READING — check immediately':d.bpm>120?'High reading — check sensor/person':'Reading received'):'Waiting for valid beats';
+rate.className=d.bpm>0&&d.bpm<=30?'bad':d.bpm>120?'warn':'good';
+if(d.bpm>0){historyData.push(d.bpm);if(historyData.length>30)historyData.shift();draw()}
+}catch(e){document.getElementById('connection').textContent='Waiting for ESP32';document.getElementById('connection').className='pill warn'}}
+refresh();setInterval(refresh,1000);window.addEventListener('resize',draw);draw();
+</script></body></html>
+)rawliteral";
+
+void handleRoot() {
+  server.send_P(200, "text/html", dashboardHtml);
+}
+
+void handleData() {
+  String json = "{";
+  json += "\"bpm\":" + String(bpm) + ",";
+  json += "\"raw\":" + String(rawSignal) + ",";
+  json += "\"system\":\"" + systemStatus + "\",";
+  json += "\"call\":\"" + callStatus + "\"";
+  json += "}";
+  server.send(200, "application/json", json);
+}
+
+void setup() {
+  Serial.begin(115200);
+  gsm.begin(9600, SERIAL_8N1, gsmRxPin, gsmTxPin);
+  pinMode(ledPin, OUTPUT);
+  analogReadResolution(12);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.print("Connecting to Wi-Fi");
+  unsigned long wifiStart = millis();
+  while (WiFi.status() != WL_CONNECTED && millis() - wifiStart < 20000) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println();
+    Serial.print("Dashboard address: http://");
+    Serial.println(WiFi.localIP());
+    systemStatus = "Wi-Fi connected";
+  } else {
+    Serial.println();
+    Serial.println("Wi-Fi not connected. Check SSID/password and reset.");
+    systemStatus = "Wi-Fi disconnected";
+  }
+
+  server.on("/", handleRoot);
+  server.on("/data", handleData);
+  server.begin();
+
+  gsm.println("AT");
+  delay(500);
+  Serial.println("ESP32 Heartbeat Monitor Started");
+}
+
+void loop() {
+  server.handleClient();
+
+  rawSignal = analogRead(pulsePin);
+  bool currentSignal = rawSignal > threshold;
+
+  if (currentSignal && !previousSignal) {
+    unsigned long currentTime = millis();
+
+    if (lastBeat > 0) {
+      unsigned long interval = currentTime - lastBeat;
+
+      // Reject implausibly short/long intervals; this is still a simple demo algorithm.
+      if (interval >= 300 && interval <= 6000) {
+        bpm = 60000 / interval;
+        lastValidBeat = currentTime;
+
+        Serial.print("Heart Rate: ");
+        Serial.print(bpm);
+        Serial.println(" BPM");
+
+        if (bpm <= lowBpmThreshold && !called) {
+          Serial.println("WARNING! Calling emergency contact.");
+          gsm.println("ATD+250791733265;");
+          called = true;
+          callStatus = "Call requested";
+          systemStatus = "Low BPM warning";
+          // Avoid blocking the dashboard for 20 seconds.
+          // The call will be ended in loop() after 20 seconds.
+          callStartedAt = millis();
+        }
+
+        if (bpm > resetBpmThreshold) {
+          called = false;
+          if (callStatus == "Call requested" || callStatus == "Call ended") {
+            callStatus = "Not triggered";
+          }
+          systemStatus = "Monitoring";
+        }
+      }
+    }
+    lastBeat = currentTime;
+  }
+
+  digitalWrite(ledPin, currentSignal ? HIGH : LOW);
+  previousSignal = currentSignal;
+
+  if (lastValidBeat > 0 && millis() - lastValidBeat > 10000) {
+    bpm = 0;
+    systemStatus = "No recent pulse";
+  }
+
+  if (called && callStartedAt > 0 && millis() - callStartedAt >= 20000) {
+    gsm.println("ATH");
+    callStatus = "Call ended";
+    callStartedAt = 0;
+  }
+
+  delay(5);
+}
