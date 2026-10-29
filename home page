@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Coffee Website - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+    margin: 15px;
+    border-radius: 10px;
+}
+</style>
+<style>
+    nav{
+        display:block;
+    }
+    </style>
+    <style>
+footer {
+    background-color: black;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+body{
+    background-color:pink;
+}
+h1{
+    color:green;
+    text-align:center;
+    text-decoration-line: underline;
+}
+h2{
+    color:green;
+    text-align:center;
+    text-decoration-line: underline;
+}
+p{
+    color:black;
+    text-align:center;
+}
+nav{
+    text-align:center;
+}
+nav a{
+   background-color:blue;
+   color:pink;
+    front-size:70px;
+text-decoration:none;
+padding:10px 15px
+margin=:5px;
+display:inline-block;
+}
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION MENU -->
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+
+    <!-- HOME SECTION -->
+    <div class="home" id="home">
+
+        <h1>WELCOME TO OUR COFFEE SHOP</h1>
+
+        <p>
+            Welcome to our coffee website!
+            We offer delicious coffee with a rich aroma,
+            excellent taste, and friendly service.
+        </p>
+
+        <img src="image/igikombe.jpg" alt="A cup of coffee">
+
+        <h2>Our Coffee</h2>
+
+        <p>
+            Coffee is one of the most popular beverages in the world.
+            It is made from roasted coffee beans.
+            Rwanda is famous for producing high-quality coffee.
+            Coffee can be served hot or cold.
+        </p>
+
+        <h2>Enjoy Our Coffee</h2>
+
+        <video width="500" controls style="max-width: 100%;">
+            <source src="video/coffee.mp4" type="video/mp4">
+           
+        </video>
+
+    
+
+  
+    <footer>
+        <p>&copy; 2026 My Coffee Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
