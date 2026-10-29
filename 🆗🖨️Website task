@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Beauty Salon | Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <h2 class="logo">Royal Beauty Salon</h2>
+
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="contact.html">Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Discover Your Beauty</h1>
+
+                <p>
+                    Welcome to Royal Beauty Salon, where style,
+                    beauty, and confidence come together.
+                    Let our professional team give you a fresh look.
+                </p>
+
+                <a href="contact.html" class="btn">
+                    Book an Appointment
+                </a>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="section why-us">
+            <h2>Why Choose Us?</h2>
+
+            <p>
+                At Royal Beauty Salon, we provide professional
+                hairstyling, friendly customer service, quality
+                products, and a relaxing environment. Our goal is
+                to help every customer look beautiful and feel confident.
+            </p>
+
+            <a href="contact.html" class="btn">
+                Contact Us
+            </a>
+        </section>
+
+        <!-- Featured Services -->
+        <section class="section">
+            <h2>Our Popular Services</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <h3>Hair Styling</h3>
+                    <p>Beautiful hairstyles for everyday life and special events.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Hair Braiding</h3>
+                    <p>Stylish braids designed to match your personality.</p>
+                </div>
+
+                <div class="card">
+                    <h3>Hair Treatment</h3>
+                    <p>Hair care services to keep your hair looking healthy.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Royal Beauty Salon. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
