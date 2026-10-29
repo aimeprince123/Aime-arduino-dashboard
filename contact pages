@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Coffee Website - Contact Us</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        footer {
+    background-color: black;
+    color: violet;
+    padding: 15px;
+    text-align: center;
+}
+        nav{
+    text-align:center;
+}
+nav a{
+   background-color:blue;
+   color:pink;
+    front-size:25px;
+text-decoration:none;
+padding:10px 15px
+margin=:5px;
+display:inline-block;
+}
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION MENU -->
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+
+
+
+        <h1>CONTACT US</h1>
+
+        <p>
+            Do you have questions about our coffee?
+            Would you like to visit our shop?
+            Contact us using the information below.
+        </p>
+
+        <form action="#" method="post">
+
+            <br>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+            <br><br>
+
+            <label for="Email">Email</label>
+            <input type="email" id="Email" name="email" required>
+            <br><br>
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message" required></textarea>
+            <br><br>
+
+            <button type="submit">Send Message</button>
+
+        </form>
+
+        <h2>Our Contact Information</h2>
+
+        <p>Email: aprokeyz47@gmail.com</p>
+        <p>Phone: +250 791733265</p>
+        <p>Address:Nyamirambo,Kigali,Rwanda</p>
+
+        <a class="email-link" href="mailto:aimeprin655@gmail.com">
+            Send Us an Email
+        </a>
+
+   
+>
+    <footer>
+        <p>&copy; 2026 My Coffee Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
