@@ -22,18 +22,33 @@
 body{
     background-color:green;
 }
+h1{
+    color:black;
+    text-align:center;
+    text-decoration-line: underline;
+}
+h2{
+    color:black;
+    text-align:center;
+    text-decoration-line: underline;
+}
+p{
+    color:black;
+    text-align:center;
+}
 nav{
     text-align:center;
 }
 nav a{
    background-color:blue;
    color:black;
-    front-size:25px;
+    font-size:25px;
 text-decoration:none;
 padding:10px 15px
 margin:5px;
 display:inline-block;
 }
+
 
 </style>
 
