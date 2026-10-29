@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>about</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        footer {
+    background-color: black;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+        img {
+    width: 300px;
+    max-width: 100%;
+    height: auto;
+    margin: 15px;
+    border-radius: 10px;
+}
+body{
+    background-color:green;
+}
+nav{
+    text-align:center;
+}
+nav a{
+   background-color:blue;
+   color:black;
+    front-size:25px;
+text-decoration:none;
+padding:10px 15px
+margin:5px;
+display:inline-block;
+}
+
+</style>
+
+</head>
+<body>
+
+    <!-- NAVIGATION MENU -->
+    <nav>
+        <a href="home.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+    </nav>
+
+  <nav>
+    
+  </nav>
+
+        <h1>ABOUT US</h1>
+
+        <p>
+            Welcome to our coffee shop!
+            We are a team dedicated to providing quality coffee
+            and excellent customer service.
+            Our goal is to make every customer happy.
+        </p>
+
+        <h2>Our Mission</h2>
+
+        <p>
+            Our mission is to serve fresh, delicious coffee,
+            support coffee lovers, and provide a comfortable
+            place where people can relax and enjoy themselves.
+        </p>
+
+        <h2>Meet Our Team</h2>
+
+        <p>
+            Our team works together to prepare and serve
+            quality coffee to our customers.
+        </p>
+
+        <img src="image/prince.jpg" alt="Prince">
+        <img src="image/jeane.jpg" alt="Jeane">
+        <img src="image/simon.jpg" alt="Simon">
+        <img src="image/evodia.jpg" alt="Evodia">
+
+        <h1>List of services we offer:</h1>
+        <p>1. Coffee brewing</p>
+        <p>2. Customized coffee orders</p>
+        <p>3. Catering services</p>
+
+        <!-- OPENING HOURS TABLE -->
+        <table border="12">
+            <thead>
+                <tr>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wensday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                    <td>24hr</td>
+                </tr>
+            </tbody>
+        </table>
+
+  
+    <footer>
+        <p>&copy; 2026 My Coffee Shop. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
